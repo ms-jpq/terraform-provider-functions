@@ -33,7 +33,9 @@ func (p *FuncProvider) Metadata(_ context.Context, _ provider.MetadataRequest, r
 
 func (p *FuncProvider) Schema(_ context.Context, _ provider.SchemaRequest, rsp *provider.SchemaResponse) {
 	rsp.Schema = schema.Schema{
-		Attributes: map[string]schema.Attribute{},
+		Attributes: map[string]schema.Attribute{
+			"_": schema.BoolAttribute{},
+		},
 	}
 }
 
