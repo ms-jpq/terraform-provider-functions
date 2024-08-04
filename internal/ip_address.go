@@ -36,7 +36,9 @@ func (f *IpAddress) Metadata(_ context.Context, _ function.MetadataRequest, rsp 
 func (f *IpAddress) Definition(_ context.Context, _ function.DefinitionRequest, rsp *function.DefinitionResponse) {
 	rsp.Definition = function.Definition{
 		Parameters: []function.Parameter{
-			function.StringParameter{},
+			function.StringParameter{
+				Name: "ip",
+			},
 		},
 		Return: function.ObjectReturn{
 			AttributeTypes: map[string]attr.Type{
