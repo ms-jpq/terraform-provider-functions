@@ -13,16 +13,16 @@ import (
 )
 
 type IpAddress struct {
-	compressed      string
-	exploded        string
-	ipv4_mapped     string
-	is_global       bool
-	is_link_local   bool
-	is_loopback     bool
-	is_multicast    bool
-	is_private      bool
-	is_unspecified  bool
-	reverse_pointer string
+	compressed      string `tfsdk:"compressed"`
+	exploded        string `tfsdk:"exploded"`
+	ipv4_mapped     string `tfsdk:"ipv4_mapped"`
+	is_global       bool   `tfsdk:"is_global"`
+	is_link_local   bool   `tfsdk:"is_link_local"`
+	is_loopback     bool   `tfsdk:"is_loopback"`
+	is_multicast    bool   `tfsdk:"is_multicast"`
+	is_private      bool   `tfsdk:"is_private"`
+	is_unspecified  bool   `tfsdk:"is_unspecified"`
+	reverse_pointer string `tfsdk:"reverse_pointer"`
 }
 
 func (*IpAddress) New() function.Function {
@@ -35,7 +35,9 @@ func (f *IpAddress) Metadata(_ context.Context, _ function.MetadataRequest, rsp 
 
 func (f *IpAddress) Definition(_ context.Context, _ function.DefinitionRequest, rsp *function.DefinitionResponse) {
 	rsp.Definition = function.Definition{
-		Parameters: []function.Parameter{},
+		Parameters: []function.Parameter{
+			function.StringParameter{},
+		},
 		Return: function.ObjectReturn{
 			AttributeTypes: map[string]attr.Type{
 				"compressed":      basetypes.StringType{},
