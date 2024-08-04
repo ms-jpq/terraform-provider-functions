@@ -23,8 +23,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/providers/" + WhoAmI + "/" + internal.ProviderName,
-		Debug:   debug,
+		Debug: debug,
 	}
 
 	provider := (*internal.FuncProvider)(nil).New
