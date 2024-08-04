@@ -40,7 +40,7 @@ $(DIST)/$(SHA_FILE): $(DIST)/$(MANIFEST)
 	sha256sum -- '$(<F)' *.zip > '$(@F)'
 
 $(DIST)/$(SIG_FILE): $(DIST)/$(SHA_FILE)
-	gpg --batch --yes --detach-sign --output '$@' -- '$<'
+	printenv -- GPG_SIGNING_PASSWORD | gpg --batch --yes --pinentry-mode loopback --passphrase-fd 0 --detach-sign --output '$@' -- '$<'
 
 package: $(DIST)/$(SIG_FILE)
 

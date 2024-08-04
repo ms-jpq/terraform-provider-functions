@@ -33,5 +33,6 @@ jobs:
 
       - env:
           GH_TOKEN: ${{ github.token }}
+          GPG_SIGNING_PASSWORD: ${{ secrets.GPG_SIGNING_PASSWORD }}
         run: |-
           make ci
