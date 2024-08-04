@@ -19,8 +19,12 @@ type FuncProvider struct {
 	version string
 }
 
-func (*FuncProvider) New() provider.Provider {
-	return &FuncProvider{}
+func (*FuncProvider) New(version string) func() provider.Provider {
+	return func() provider.Provider {
+		return &FuncProvider{
+			version: version,
+		}
+	}
 }
 
 func (p *FuncProvider) Metadata(_ context.Context, _ provider.MetadataRequest, rsp *provider.MetadataResponse) {

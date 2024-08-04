@@ -11,6 +11,12 @@ import (
 
 const WhoAmI = "ms-jpq"
 
+var (
+	version = "dev"
+	commit  = "none"
+	date    = "unknown"
+)
+
 func main() {
 	var debug bool
 
@@ -22,7 +28,7 @@ func main() {
 		Debug:   debug,
 	}
 
-	provider := (*internal.FuncProvider)(nil).New
+	provider := (*internal.FuncProvider)(nil).New(version)
 	if err := providerserver.Serve(context.Background(), provider, opts); err != nil {
 		log.Fatal(err.Error())
 	}
