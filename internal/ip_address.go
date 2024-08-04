@@ -72,7 +72,7 @@ func (f *IpAddress) Run(ctx context.Context, req function.RunRequest, rsp *funct
 		domain := ""
 		if addr.Is4() {
 			domain = ".in-addr.arpa"
-			strings.Split(exploded, ".")
+			split = strings.Split(exploded, ".")
 		} else {
 			domain = ".ip6.arpa"
 			split = strings.Split(strings.ReplaceAll(exploded, ":", ""), "")
@@ -95,6 +95,5 @@ func (f *IpAddress) Run(ctx context.Context, req function.RunRequest, rsp *funct
 			"reverse_pointer": basetypes.NewStringValue(reverse_pointer),
 		},
 	)
-	rsp.Error = function.ConcatFuncErrors(rsp.Error, function.FuncErrorFromDiags(ctx, diags))
-	rsp.Error = function.ConcatFuncErrors(rsp.Error, rsp.Result.Set(ctx, output))
+	rsp.Error = function.ConcatFuncErrors(rsp.Error, function.FuncErrorFromDiags(ctx, diags), rsp.Result.Set(ctx, output))
 }
