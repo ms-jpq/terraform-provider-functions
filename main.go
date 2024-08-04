@@ -1,10 +1,16 @@
 package main
 
 import (
-	"fmt"
+	"context"
+	"flag"
 	"log"
-	"os"
-	"path/filepath"
+	"main/internal"
+
+	"github.com/hashicorp/terraform-plugin-framework/providerserver"
+)
+
+var (
+	version string = "dev"
 )
 
 func init() {
@@ -12,13 +18,17 @@ func init() {
 }
 
 func main() {
-	self, err := os.Executable()
-	if err != nil {
-		log.Panicln(err)
+	var debug bool
+
+	flag.BoolVar(&debug, "debug", false, "")
+	flag.Parse()
+
+	opts := providerserver.ServeOpts{
+		Address: "registry.terraform.io/ms-jpq/func",
+		Debug:   debug,
 	}
-	dir := filepath.Dir(self)
-	if err := os.Chdir(dir); err != nil {
-		log.Panicln(err)
+
+	if err := providerserver.Serve(context.Background(), internal.NewProvider(version), opts); err != nil {
+		log.Fatal(err.Error())
 	}
-	fmt.Println(self)
 }

@@ -23,13 +23,13 @@ SIG_FILE := $(SHA_FILE).sig
 
 clean:
 	shopt -u failglob
-	rm -v -rf -- '$(DIST)'
+	rm -v -rf -- '$(DIST)' go.sum main
 
 clobber: clean
 	shopt -u failglob
 	rm -v -rf --
 
-$(DIST): .goreleaser.yml main.go
+$(DIST): .goreleaser.yml main.go $(shell shopt -u failglob && printf -- '%s ' internal/*.go)
 	GORELEASER_CURRENT_TAG='$(GIT_TAG)' goreleaser release --clean --skip validate,publish
 
 $(DIST)/$(MANIFEST): terraform-registry-manifest.json $(DIST)
