@@ -9,26 +9,26 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/providerserver"
 )
 
-var (
-	version string = "dev"
-)
+const WhoAmI = "ms-jpq"
 
 func init() {
 	log.SetFlags(log.Lshortfile)
 }
 
 func main() {
+
 	var debug bool
 
 	flag.BoolVar(&debug, "debug", false, "")
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/ms-jpq/func",
+		Address: "registry.terraform.io/providers/" + WhoAmI + "/" + internal.ProviderName,
 		Debug:   debug,
 	}
 
-	if err := providerserver.Serve(context.Background(), internal.NewProvider(version), opts); err != nil {
+	provider := (*internal.FuncProvider)(nil).New
+	if err := providerserver.Serve(context.Background(), provider, opts); err != nil {
 		log.Fatal(err.Error())
 	}
 }

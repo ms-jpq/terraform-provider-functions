@@ -10,6 +10,8 @@ import (
 	"github.com/hashicorp/terraform-plugin-framework/resource"
 )
 
+const ProviderName = "functions"
+
 var _ provider.Provider = &FuncProvider{}
 var _ provider.ProviderWithFunctions = &FuncProvider{}
 
@@ -17,17 +19,12 @@ type FuncProvider struct {
 	version string
 }
 
-func NewProvider(version string) func() provider.Provider {
-	return func() provider.Provider {
-		return &FuncProvider{
-			version: version,
-		}
-	}
+func (*FuncProvider) New() provider.Provider {
+	return &FuncProvider{}
 }
 
 func (p *FuncProvider) Metadata(_ context.Context, _ provider.MetadataRequest, rsp *provider.MetadataResponse) {
-	rsp.TypeName = "func"
-	rsp.Version = p.version
+	rsp.TypeName = ProviderName
 }
 
 func (p *FuncProvider) Schema(_ context.Context, _ provider.SchemaRequest, rsp *provider.SchemaResponse) {
