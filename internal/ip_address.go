@@ -13,16 +13,6 @@ import (
 )
 
 type IpAddress struct {
-	compressed      string `tfsdk:"compressed"`
-	exploded        string `tfsdk:"exploded"`
-	ipv4_mapped     string `tfsdk:"ipv4_mapped"`
-	is_global       bool   `tfsdk:"is_global"`
-	is_link_local   bool   `tfsdk:"is_link_local"`
-	is_loopback     bool   `tfsdk:"is_loopback"`
-	is_multicast    bool   `tfsdk:"is_multicast"`
-	is_private      bool   `tfsdk:"is_private"`
-	is_unspecified  bool   `tfsdk:"is_unspecified"`
-	reverse_pointer string `tfsdk:"reverse_pointer"`
 }
 
 func (*IpAddress) New() function.Function {
@@ -33,6 +23,21 @@ func (f *IpAddress) Metadata(_ context.Context, _ function.MetadataRequest, rsp 
 	rsp.Name = "ip_address"
 }
 
+func (f *IpAddress) def() map[string]attr.Type {
+	return map[string]attr.Type{
+		"compressed":      basetypes.StringType{},
+		"exploded":        basetypes.StringType{},
+		"ipv4_mapped":     basetypes.StringType{},
+		"is_global":       basetypes.BoolType{},
+		"is_link_local":   basetypes.BoolType{},
+		"is_loopback":     basetypes.BoolType{},
+		"is_multicast":    basetypes.BoolType{},
+		"is_private":      basetypes.BoolType{},
+		"is_unspecified":  basetypes.BoolType{},
+		"reverse_pointer": basetypes.StringType{},
+	}
+}
+
 func (f *IpAddress) Definition(_ context.Context, _ function.DefinitionRequest, rsp *function.DefinitionResponse) {
 	rsp.Definition = function.Definition{
 		Parameters: []function.Parameter{
@@ -41,18 +46,7 @@ func (f *IpAddress) Definition(_ context.Context, _ function.DefinitionRequest, 
 			},
 		},
 		Return: function.ObjectReturn{
-			AttributeTypes: map[string]attr.Type{
-				"compressed":      basetypes.StringType{},
-				"exploded":        basetypes.StringType{},
-				"ipv4_mapped":     basetypes.StringType{},
-				"is_global":       basetypes.BoolType{},
-				"is_link_local":   basetypes.BoolType{},
-				"is_loopback":     basetypes.BoolType{},
-				"is_multicast":    basetypes.BoolType{},
-				"is_private":      basetypes.BoolType{},
-				"is_unspecified":  basetypes.BoolType{},
-				"reverse_pointer": basetypes.StringType{},
-			},
+			AttributeTypes: f.def(),
 		},
 	}
 }
@@ -87,17 +81,20 @@ func (f *IpAddress) Run(ctx context.Context, req function.RunRequest, rsp *funct
 		return strings.Join(split, ".") + domain
 	}()
 
-	f = &IpAddress{
-		compressed:      addr.String(),
-		exploded:        exploded,
-		ipv4_mapped:     addr.Unmap().StringExpanded(),
-		is_global:       addr.IsGlobalUnicast(),
-		is_link_local:   addr.IsLinkLocalUnicast(),
-		is_loopback:     addr.IsLoopback(),
-		is_multicast:    addr.IsMulticast(),
-		is_private:      addr.IsPrivate(),
-		is_unspecified:  addr.IsUnspecified(),
-		reverse_pointer: reverse_pointer,
-	}
-	rsp.Error = function.ConcatFuncErrors(rsp.Error, rsp.Result.Set(ctx, f))
+	output, diags := basetypes.NewObjectValue(f.def(),
+		map[string]attr.Value{
+			"compressed":      basetypes.NewStringValue(addr.String()),
+			"exploded":        basetypes.NewStringValue(exploded),
+			"ipv4_mapped":     basetypes.NewStringValue(addr.Unmap().StringExpanded()),
+			"is_global":       basetypes.NewBoolValue(addr.IsGlobalUnicast()),
+			"is_link_local":   basetypes.NewBoolValue(addr.IsLinkLocalUnicast()),
+			"is_loopback":     basetypes.NewBoolValue(addr.IsLoopback()),
+			"is_multicast":    basetypes.NewBoolValue(addr.IsMulticast()),
+			"is_private":      basetypes.NewBoolValue(addr.IsPrivate()),
+			"is_unspecified":  basetypes.NewBoolValue(addr.IsUnspecified()),
+			"reverse_pointer": basetypes.NewStringValue(reverse_pointer),
+		},
+	)
+	rsp.Error = function.ConcatFuncErrors(rsp.Error, function.FuncErrorFromDiags(ctx, diags))
+	rsp.Error = function.ConcatFuncErrors(rsp.Error, rsp.Result.Set(ctx, output))
 }
