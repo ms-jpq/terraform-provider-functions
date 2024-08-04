@@ -11,19 +11,15 @@ import (
 
 const WhoAmI = "ms-jpq"
 
-func init() {
-	log.SetFlags(log.Lshortfile)
-}
-
 func main() {
-
 	var debug bool
 
 	flag.BoolVar(&debug, "debug", false, "")
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Debug: debug,
+		Address: "registry.terraform.io/" + WhoAmI + "/" + internal.ProviderName,
+		Debug:   debug,
 	}
 
 	provider := (*internal.FuncProvider)(nil).New
