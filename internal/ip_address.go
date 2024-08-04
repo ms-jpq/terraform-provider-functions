@@ -71,12 +71,19 @@ func (f *IpAddress) Run(ctx context.Context, req function.RunRequest, rsp *funct
 	addr, _ := netip.ParseAddr(ip.String())
 
 	exploded := addr.StringExpanded()
-	parts := strings.Split(exploded, ":")
-	slices.Reverse(parts)
-	reverse_domain := ".in-addr.arpa"
-	if addr.Is6() {
-		reverse_domain = ".ip6.arpa"
-	}
+	reverse_pointer := func() string {
+		split := []string{}
+		domain := ""
+		if addr.Is4() {
+			domain = ".in-addr.arpa"
+			strings.Split(exploded, ".")
+		} else {
+			domain = ".ip6.arpa"
+			split = strings.Split(strings.ReplaceAll(exploded, ":", ""), "")
+		}
+		slices.Reverse(split)
+		return strings.Join(split, ".") + domain
+	}()
 
 	output := IpAddress{
 		compressed:      addr.String(),
@@ -88,7 +95,7 @@ func (f *IpAddress) Run(ctx context.Context, req function.RunRequest, rsp *funct
 		is_multicast:    addr.IsMulticast(),
 		is_private:      addr.IsPrivate(),
 		is_unspecified:  addr.IsUnspecified(),
-		reverse_pointer: strings.Join(parts, ".") + reverse_domain,
+		reverse_pointer: reverse_pointer,
 	}
 	rsp.Error = function.ConcatFuncErrors(rsp.Error, rsp.Result.Set(ctx, output))
 }
