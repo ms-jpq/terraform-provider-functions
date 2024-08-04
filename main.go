@@ -17,6 +17,10 @@ var (
 	date    = "unknown"
 )
 
+func init() {
+	log.SetFlags(log.Lshortfile)
+}
+
 func main() {
 	var debug bool
 
@@ -28,7 +32,7 @@ func main() {
 		Debug:   debug,
 	}
 
-	provider := (*internal.FuncProvider)(nil).New(version)
+	provider := (*internal.FnProvider)(nil).New(version)
 	if err := providerserver.Serve(context.Background(), provider, opts); err != nil {
 		log.Fatal(err.Error())
 	}

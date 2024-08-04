@@ -12,44 +12,45 @@ import (
 
 const ProviderName = "functions"
 
-var _ provider.Provider = &FuncProvider{}
-var _ provider.ProviderWithFunctions = &FuncProvider{}
+var _ provider.Provider = &FnProvider{}
+var _ provider.ProviderWithFunctions = &FnProvider{}
 
-type FuncProvider struct {
+type FnProvider struct {
 	version string
 }
 
-func (*FuncProvider) New(version string) func() provider.Provider {
+func (*FnProvider) New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &FuncProvider{
+		return &FnProvider{
 			version: version,
 		}
 	}
 }
 
-func (p *FuncProvider) Metadata(_ context.Context, _ provider.MetadataRequest, rsp *provider.MetadataResponse) {
+func (p *FnProvider) Metadata(_ context.Context, _ provider.MetadataRequest, rsp *provider.MetadataResponse) {
 	rsp.TypeName = ProviderName
+	rsp.Version = p.version
 }
 
-func (p *FuncProvider) Schema(_ context.Context, _ provider.SchemaRequest, rsp *provider.SchemaResponse) {
+func (p *FnProvider) Schema(_ context.Context, _ provider.SchemaRequest, rsp *provider.SchemaResponse) {
 	rsp.Schema = schema.Schema{
 		Attributes: map[string]schema.Attribute{},
 	}
 }
 
-func (p *FuncProvider) Configure(_ context.Context, _ provider.ConfigureRequest, _ *provider.ConfigureResponse) {
+func (p *FnProvider) Configure(_ context.Context, _ provider.ConfigureRequest, _ *provider.ConfigureResponse) {
 }
 
-func (p *FuncProvider) Functions(_ context.Context) []func() function.Function {
+func (p *FnProvider) Functions(_ context.Context) []func() function.Function {
 	return []func() function.Function{
 		(*IpAddress)(nil).New,
 	}
 }
 
-func (p *FuncProvider) DataSources(_ context.Context) []func() datasource.DataSource {
+func (p *FnProvider) DataSources(_ context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{}
 }
 
-func (p *FuncProvider) Resources(_ context.Context) []func() resource.Resource {
+func (p *FnProvider) Resources(_ context.Context) []func() resource.Resource {
 	return []func() resource.Resource{}
 }

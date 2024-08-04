@@ -87,7 +87,7 @@ func (f *IpAddress) Run(ctx context.Context, req function.RunRequest, rsp *funct
 		return strings.Join(split, ".") + domain
 	}()
 
-	output := IpAddress{
+	f = &IpAddress{
 		compressed:      addr.String(),
 		exploded:        exploded,
 		ipv4_mapped:     addr.Unmap().StringExpanded(),
@@ -99,5 +99,5 @@ func (f *IpAddress) Run(ctx context.Context, req function.RunRequest, rsp *funct
 		is_unspecified:  addr.IsUnspecified(),
 		reverse_pointer: reverse_pointer,
 	}
-	rsp.Error = function.ConcatFuncErrors(rsp.Error, rsp.Result.Set(ctx, output))
+	rsp.Error = function.ConcatFuncErrors(rsp.Error, rsp.Result.Set(ctx, f))
 }

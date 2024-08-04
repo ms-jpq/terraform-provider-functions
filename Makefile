@@ -21,7 +21,7 @@ NAME_PREFIX := $(notdir $(PWD))_$(VERSION)
 MANIFEST := $(NAME_PREFIX)_manifest.json
 SHA_FILE := $(NAME_PREFIX)_SHA256SUMS
 SIG_FILE := $(SHA_FILE).sig
-GO = main.go go.mod $(shell shopt -u failglob && printf -- '%s ' internal/*.go)
+GO = go.mod main.go $(shell shopt -u failglob && printf -- '%s ' internal/*.go)
 
 clean:
 	shopt -u failglob
