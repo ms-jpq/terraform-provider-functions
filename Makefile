@@ -36,7 +36,7 @@ go.mod:
 	go mod tidy
 
 $(VAR)/bin/tfplugindocs: go.mod
-	GOPATH='$(PWD)/$(VAR)' go install -- 'github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs'
+	GOPATH='$(PWD)/$(VAR)' go install -modcacherw -- 'github.com/hashicorp/terraform-plugin-docs/cmd/tfplugindocs'
 
 docs: $(VAR)/bin/tfplugindocs
 	'$<' generate
